@@ -10,4 +10,8 @@ class TestTextNode():
 
     def test_creation(self):
         node = TextNode("This is a text node", "bold")
-        assert node.repr() == "TextNode(This is a text node, bold, None)"
+        assert str(node) == "TextNode(This is a text node, bold, None)"
+        node.url = "https://www.boot.dev"
+        assert str(node) == "TextNode(This is a text node, bold, https://www.boot.dev)"
+        node = TextNode("This is a new node", "bold", "https://www.boot.dev")
+        assert str(node) == "TextNode(This is a new node, bold, https://www.boot.dev)"
