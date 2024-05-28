@@ -11,5 +11,21 @@ class TextNode:
                 self.text_type == node.text_type and
                 self.url == node.url)
 
+
+    def split_nodes_delimiter(nodes, delimiter, text_type):
+        split_nodes = []
+        for node in nodes:
+            split_text = node.text.split(delimiter)
+            num_nodes = len(split_text)
+            if num_nodes % 2 == 0 and num_nodes != 0:
+                raise Exception("ERROR: missing delimiter")
+            for i in range(0, len(split_text)):
+                if i % 2 == 0:
+                    split_nodes.append(TextNode(split_text[i], node.text_type))
+                else:
+                    split_nodes.append(TextNode(split_text[i], text_type))
+        return split_nodes
+                
+    
     def __repr__(self):
         return f"TextNode({self.text}, {self.text_type}, {self.url})"
