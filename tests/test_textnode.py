@@ -79,3 +79,33 @@ class TestTextNode():
         assert len(new_nodes_3) == len(new_nodes_expected_3)
         for i in range(0, len(new_nodes_expected)):
             assert str(new_nodes_3[i]) == str(new_nodes_expected_3[i])
+
+
+    def test_extract_image(self):
+        text = "This is text with an ![image](https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/zjjcJKZ.png) and ![another](https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/dfsdkjfd.png)"
+        extracted_img_links = TextNode.extract_markdown_images(text)
+        expected_img_links = [
+            ('image', 'https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/zjjcJKZ.png'),
+            ('another', 'https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/dfsdkjfd.png')
+        ]
+        assert len(extracted_img_links) == len(expected_img_links)
+        for i in range(0, len(extracted_img_links)):
+            assert len(extracted_img_links[i]) == 2
+            assert extracted_img_links[i][0] == expected_img_links[i][0]
+            assert extracted_img_links[i][1] == expected_img_links[i][1]
+        no_img_text = "This is text with a [link](https://www.example.com) and [another](https://www.example.com/another)"
+        assert TextNode.extract_markdown_images(no_img_text) == []
+
+    def test_extract_links(self):
+        text = "This is text with a [link](https://www.example.com) and [another](https://www.example.com/another)"
+        extracted_links = TextNode.extract_markdown_links(text)
+        expected_links = [
+            ('link', 'https://www.example.com'),
+            ('another', 'https://www.example.com/another')
+        ]
+        assert len(extracted_links) == len(expected_links)
+        for i in range(0, len(extracted_links)):
+            assert len(extracted_links[i]) == 2
+            assert extracted_links[i][0] == expected_links[i][0]
+            assert extracted_links[i][1] == expected_links[i][1]
+        
