@@ -80,7 +80,6 @@ class TestTextNode():
         for i in range(0, len(new_nodes_expected)):
             assert str(new_nodes_3[i]) == str(new_nodes_expected_3[i])
 
-
     def test_extract_image(self):
         text = "This is text with an ![image](https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/zjjcJKZ.png) and ![another](https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/dfsdkjfd.png)"
         extracted_img_links = TextNode.extract_markdown_images(text)
@@ -108,4 +107,101 @@ class TestTextNode():
             assert len(extracted_links[i]) == 2
             assert extracted_links[i][0] == expected_links[i][0]
             assert extracted_links[i][1] == expected_links[i][1]
+
+    def test_split_nodes_images(self):
+        node1 = TextNode(
+            "This is text with an ![image](https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/zjjcJKZ.png) and another ![second image](https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/3elNhQu.png)",
+            "text")
+        node2 = TextNode("Another node that ends with ![another image](https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/zjjcJKZ.png)", "text")
+        node3 = TextNode("![An image](https://www.somedomain.com/imgs/abc123.png) at the beginning.", "text")
+        expected_nodes = [
+            TextNode("This is text with an ", "text"),
+            TextNode("image", "image", "https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/zjjcJKZ.png"),
+            TextNode(" and another ", "text"),
+            TextNode("second image", "image", "https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/3elNhQu.png")
+        ]
+        actual_nodes = TextNode.split_nodes_images([node1])
+        assert len(actual_nodes) == len(expected_nodes)
+        for i in range(0, len(actual_nodes)):
+            assert str(actual_nodes[i]) == str(expected_nodes[i])
+        actual_nodes.append(node2)
+        expected_nodes = [
+            TextNode("This is text with an ", "text"),
+            TextNode("image", "image", "https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/zjjcJKZ.png"),
+            TextNode(" and another ", "text"),
+            TextNode("second image", "image", "https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/3elNhQu.png"),
+            TextNode("Another node that ends with ", "text"),
+            TextNode("another image", "image", "https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/zjjcJKZ.png")
+        ]
+        actual_nodes = TextNode.split_nodes_images(actual_nodes)
+        assert len(actual_nodes) == len(expected_nodes)
+        for i in range(0, len(actual_nodes)):
+            assert str(actual_nodes[i]) == str(expected_nodes[i])
+        actual_nodes.append(node3)
+        expected_nodes = [
+            TextNode("This is text with an ", "text"),
+            TextNode("image", "image", "https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/zjjcJKZ.png"),
+            TextNode(" and another ", "text"),
+            TextNode("second image", "image", "https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/3elNhQu.png"),
+            TextNode("Another node that ends with ", "text"),
+            TextNode("another image", "image", "https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/zjjcJKZ.png"),
+            TextNode("An image", "image", "https://www.somedomain.com/imgs/abc123.png"),
+            TextNode(" at the beginning.", "text")
+        ]
+        actual_nodes = TextNode.split_nodes_images(actual_nodes)
+        assert len(actual_nodes) == len(expected_nodes)
+        for i in range(0, len(actual_nodes)):
+            assert str(actual_nodes[i]) == str(expected_nodes[i])
+        
+        
+            
+    def test_split_nodes_links(self):
+        node1 = TextNode("This is text with a [link](https://www.example.com) and [another](https://www.example.com/another) link with some more text after it.", "text")
+        node2 = TextNode("This is a separate node that has a link as the final part of the string, [like so](https://www.google.com)", "text")
+        node3 = TextNode("[A starting link](https://www.example.com/start) to test that nodes starting with a link work", "text")
+        expected_nodes = [
+            TextNode("This is text with a ", "text"),
+            TextNode("link", "link", "https://www.example.com"),
+            TextNode(" and ", "text"),
+            TextNode("another", "link", "https://www.example.com/another"),
+            TextNode(" link with some more text after it.", "text")
+        ]
+        actual_nodes = TextNode.split_nodes_links([node1])
+        assert len(actual_nodes) == len(expected_nodes)
+        for i in range(0, len(actual_nodes)):
+            assert str(actual_nodes[i]) == str(expected_nodes[i])
+        actual_nodes.append(node2)
+        expected_nodes = [
+            TextNode("This is text with a ", "text"),
+            TextNode("link", "link", "https://www.example.com"),
+            TextNode(" and ", "text"),
+            TextNode("another", "link", "https://www.example.com/another"),
+            TextNode(" link with some more text after it.", "text"),
+            TextNode("This is a separate node that has a link as the final part of the string, ", "text"),
+            TextNode("like so", "link", "https://www.google.com")
+        ]
+        actual_nodes = TextNode.split_nodes_links(actual_nodes)
+        assert len(actual_nodes) == len(expected_nodes)
+        for i in range(0, len(actual_nodes)):
+            assert str(actual_nodes[i]) == str(expected_nodes[i])
+        actual_nodes.append(node3)
+        expected_nodes = [
+            TextNode("This is text with a ", "text"),
+            TextNode("link", "link", "https://www.example.com"),
+            TextNode(" and ", "text"),
+            TextNode("another", "link", "https://www.example.com/another"),
+            TextNode(" link with some more text after it.", "text"),
+            TextNode("This is a separate node that has a link as the final part of the string, ", "text"),
+            TextNode("like so", "link", "https://www.google.com"),
+            TextNode("A starting link", "link", "https://www.example.com/start"),
+            TextNode(" to test that nodes starting with a link work", "text")
+        ]
+        actual_nodes = TextNode.split_nodes_links(actual_nodes)
+        assert len(actual_nodes) == len(expected_nodes)
+        for i in range(0, len(actual_nodes)):
+            assert str(actual_nodes[i]) == str(expected_nodes[i])
+        
+        
+        
+        
         
