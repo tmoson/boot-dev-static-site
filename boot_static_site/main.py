@@ -18,7 +18,16 @@ def text_node_to_html_node(text_node):
             return LeafNode("img", "", {"src": text_node.url, "alt": text_node.text})
         case _:
             raise Exception("Text type not valid for HTML conversion")
-        
+
+def text_to_textnodes(text):
+    initial_node = TextNode(text, "text")
+    return TextNode.split_nodes_delimiter(
+              TextNode.split_nodes_delimiter(
+                TextNode.split_nodes_delimiter(
+                    TextNode.split_nodes_links(TextNode.split_nodes_images([initial_node])),
+                "**", "bold"),
+              "*", "italic"),
+           "`", "code")        
 
 def main():
     text_node = TextNode("This is a text node", "bold", "https://www.boot.dev")

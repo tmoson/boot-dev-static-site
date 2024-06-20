@@ -22,9 +22,9 @@ class TextNode:
                 raise Exception("ERROR: missing delimiter")
             for i in range(0, len(split_text)):
                 if i % 2 == 0:
-                    split_nodes.append(TextNode(split_text[i], node.text_type))
+                    split_nodes.append(TextNode(split_text[i], node.text_type, node.url))
                 else:
-                    split_nodes.append(TextNode(split_text[i], text_type))
+                    split_nodes.append(TextNode(split_text[i], text_type, node.url))
         return split_nodes
 
     def extract_markdown_images(text):
@@ -84,7 +84,17 @@ class TextNode:
                 elif len(split_text) > 1:
                     split_nodes.append(TextNode(split_text[1], "text"))
         return split_nodes
-                
 
     def __repr__(self):
         return f"TextNode({self.text}, {self.text_type}, {self.url})"
+
+
+def text_to_textnodes(text):
+    initial_node = TextNode(text, "text")
+    return TextNode.split_nodes_delimiter(
+              TextNode.split_nodes_delimiter(
+                TextNode.split_nodes_delimiter(
+                    TextNode.split_nodes_links(TextNode.split_nodes_images([initial_node])),
+                "**", "bold"),
+              "*", "italic"),
+           "`", "code")

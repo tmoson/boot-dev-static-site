@@ -1,6 +1,6 @@
 import pytest
 
-from boot_static_site.textnode import TextNode
+from boot_static_site.textnode import TextNode, text_to_textnodes
 
 class TestTextNode():
     def test_eq(self):
@@ -125,18 +125,6 @@ class TestTextNode():
         for i in range(0, len(actual_nodes)):
             assert str(actual_nodes[i]) == str(expected_nodes[i])
         actual_nodes.append(node2)
-        expected_nodes = [
-            TextNode("This is text with an ", "text"),
-            TextNode("image", "image", "https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/zjjcJKZ.png"),
-            TextNode(" and another ", "text"),
-            TextNode("second image", "image", "https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/3elNhQu.png"),
-            TextNode("Another node that ends with ", "text"),
-            TextNode("another image", "image", "https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/zjjcJKZ.png")
-        ]
-        actual_nodes = TextNode.split_nodes_images(actual_nodes)
-        assert len(actual_nodes) == len(expected_nodes)
-        for i in range(0, len(actual_nodes)):
-            assert str(actual_nodes[i]) == str(expected_nodes[i])
         actual_nodes.append(node3)
         expected_nodes = [
             TextNode("This is text with an ", "text"),
@@ -200,8 +188,23 @@ class TestTextNode():
         assert len(actual_nodes) == len(expected_nodes)
         for i in range(0, len(actual_nodes)):
             assert str(actual_nodes[i]) == str(expected_nodes[i])
-        
-        
-        
-        
-        
+
+    def test_text_to_text_nodes(self):
+        text = "This is **text** with an *italic* word and a `code block` and an ![image](https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/zjjcJKZ.png) and a [link](https://boot.dev)"
+        nodes = text_to_textnodes(text)
+        expected = [
+            TextNode("This is ", "text"),
+            TextNode("text", "bold"),
+            TextNode(" with an ", "text"),
+            TextNode("italic", "italic"),
+            TextNode(" word and a ", "text"),
+            TextNode("code block", "code"),
+            TextNode(" and an ", "text"),
+            TextNode("image", "image", "https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/zjjcJKZ.png"),
+            TextNode(" and a ", "text"),
+            TextNode("link", "link", "https://boot.dev")
+        ]
+        assert len(nodes) == len(expected)
+        for i in range(0, len(nodes)):
+            assert str(nodes[i]) == str(expected[i])
+            
