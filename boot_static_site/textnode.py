@@ -16,6 +16,9 @@ class TextNode:
     def split_nodes_delimiter(nodes, delimiter, text_type):
         split_nodes = []
         for node in nodes:
+            if node.text_type != "text":
+                split_nodes.append(node)
+                continue
             split_text = node.text.split(delimiter)
             num_nodes = len(split_text)
             if num_nodes % 2 == 0 and num_nodes != 0:
