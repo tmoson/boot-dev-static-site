@@ -142,3 +142,76 @@ class TestBlockMarkdown:
         expected = [ type_paragraph, type_paragraph, type_heading ]
         for i in range(0, len(blocks)):
             assert block_to_block_type(blocks[i]) == expected[i]
+
+
+    def test_block_to_block_type_ordered_list(self):
+        text = ("# This is a header\n"
+                "\n"
+                "A paragraph to precede the list\n"
+                "This is very important info\n"
+                "\n"
+                "1. first point\n"
+                "2. second point\n"
+                "3. third point")
+        blocks = markdown_to_blocks(text)
+        expected = [ type_heading, type_paragraph, type_ordered_list]
+        for i in range(0, len(blocks)):
+            assert block_to_block_type(blocks[i]) == expected[i]
+        text = ("# This is a header\n"
+                "\n"
+                "A paragraph to precede the list\n"
+                "This is very important info\n"
+                "\n"
+                "1. first point\n"
+                "1. second point\n"
+                "3. third point")
+        blocks = markdown_to_blocks(text)
+        expected = [ type_heading, type_paragraph, type_paragraph]
+        for i in range(0, len(blocks)):
+            assert block_to_block_type(blocks[i]) == expected[i]
+        text = ("# This is a header\n"
+                "\n"
+                "A paragraph to precede the list\n"
+                "This is very important info\n"
+                "\n"
+                "1. first point\n"
+                ". second point\n"
+                "2. third point")
+        blocks = markdown_to_blocks(text)
+        expected = [ type_heading, type_paragraph, type_paragraph]
+        text = ("# This is a header\n"
+                "\n"
+                "A paragraph to precede the list\n"
+                "This is very important info\n"
+                "\n"
+                "1. first point\n"
+                "second point\n"
+                "3. third point")
+        blocks = markdown_to_blocks(text)
+        expected = [ type_heading, type_paragraph, type_paragraph]
+        for i in range(0, len(blocks)):
+            assert block_to_block_type(blocks[i]) == expected[i]
+        text = ("# This is a header\n"
+                "\n"
+                "A paragraph to precede the list\n"
+                "This is very important info\n"
+                "\n"
+                "1. first point\n"
+                "2.second point\n"
+                "3. third point")
+        blocks = markdown_to_blocks(text)
+        expected = [ type_heading, type_paragraph, type_paragraph]
+        for i in range(0, len(blocks)):
+            assert block_to_block_type(blocks[i]) == expected[i]
+        text = ("# This is a header\n"
+                "\n"
+                "A paragraph to precede the list\n"
+                "This is very important info\n"
+                "\n"
+                "1. first point\n"
+                "2 second point\n"
+                "3. third point")
+        blocks = markdown_to_blocks(text)
+        expected = [ type_heading, type_paragraph, type_paragraph]
+        for i in range(0, len(blocks)):
+            assert block_to_block_type(blocks[i]) == expected[i]

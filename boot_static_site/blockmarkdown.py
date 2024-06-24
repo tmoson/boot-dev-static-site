@@ -18,7 +18,7 @@ def block_to_block_type(block):
         num = 0
         for line in block.splitlines():
             num += 1
-            if re.match(r'^(\d+\.)', line) is None:
+            if re.match(r'^(\d+\. )', line) is None:
                 return type_paragraph
             elif int(re.match(r'^(\d+)', line).group(0)) != num:
                 return type_paragraph
