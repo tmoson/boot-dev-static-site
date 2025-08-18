@@ -6,6 +6,7 @@ class TextType(Enum):
     CODE = "code"
     LINK = "link"
     IMAGE = "image"
+    TEXT = "text"
 
     def __str__(self):
         return self.value
