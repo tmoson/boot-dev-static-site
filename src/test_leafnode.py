@@ -1,6 +1,7 @@
 import unittest
 from leafnode import LeafNode
 
+
 class TestLeafNode(unittest.TestCase):
     def test_leaf_to_html_p(self):
         node = LeafNode("p", "Hello, world!")
@@ -8,9 +9,11 @@ class TestLeafNode(unittest.TestCase):
 
     def test_init_and_to_html(self):
         leaf_node1 = LeafNode("a", "Click me!", {"href": "https://www.google.com"})
-        self.assertEqual(leaf_node1.to_html(),'<a href="https://www.google.com">Click me!</a>')
+        self.assertEqual(
+            leaf_node1.to_html(), '<a href="https://www.google.com">Click me!</a>'
+        )
         leaf_node2 = LeafNode("p", "This is a paragraph of text.")
-        self.assertEqual(leaf_node2.to_html(),'<p>This is a paragraph of text.</p>')
+        self.assertEqual(leaf_node2.to_html(), "<p>This is a paragraph of text.</p>")
 
     def test_require_value(self):
         with self.assertRaises(ValueError):

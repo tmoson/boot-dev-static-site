@@ -1,12 +1,16 @@
 import unittest
 from htmlnode import HTMLNode
 
+
 class TestHTMLNode(unittest.TestCase):
     def test_props_to_html(self):
-        node = HTMLNode(tag="div", value="This is some text", props={"class": "body", "href": "https://www.boot.dev"})
+        node = HTMLNode(
+            tag="div",
+            value="This is some text",
+            props={"class": "body", "href": "https://www.boot.dev"},
+        )
         self.assertEqual(
-            node.props_to_html(),
-            "class=\"body\" href=\"https://www.boot.dev\""
+            node.props_to_html(), 'class="body" href="https://www.boot.dev"'
         )
 
     def test_contents(self):
@@ -20,5 +24,12 @@ class TestHTMLNode(unittest.TestCase):
         self.assertEqual(node2.children[0], node)
 
     def test_repr(self):
-        node = HTMLNode(tag="div", value="This is some text", props={"class": "body", "href": "https://www.boot.dev"})
-        self.assertEqual(node.__repr__(), "HTMLNode(div, This is some text, None, {'class': 'body', 'href': 'https://www.boot.dev'})")
+        node = HTMLNode(
+            tag="div",
+            value="This is some text",
+            props={"class": "body", "href": "https://www.boot.dev"},
+        )
+        self.assertEqual(
+            node.__repr__(),
+            "HTMLNode(div, This is some text, None, {'class': 'body', 'href': 'https://www.boot.dev'})",
+        )
