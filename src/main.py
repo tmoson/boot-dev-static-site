@@ -1,5 +1,7 @@
+from blocks import BlockType, block_to_block_type
 from textnode import TextNode, TextType
 from leafnode import LeafNode
+from htmlnode import HTMLNode
 import re
 
 
@@ -177,6 +179,84 @@ def text_to_text_node(text):
         ),
         "`",
         TextType.CODE,
+    )
+
+def text_to_children(text):
+    text_nodes = text_to_text_node(text)
+    html_nodes = []
+    for text_node in text_nodes:
+        html_nodes.append(text_node_to_html_node(text_node))
+    return html_nodes
+
+def markdown_to_html_node(markdown: str):
+    children = []
+    for block in markdown_to_blocks(markdown):
+        block_type = block_to_block_type(block)
+        match block_type:
+            case BlockType.CODE:
+                children.append(
+                    HTMLNode(
+                        tag="pre",
+                        children=[text_node_to_html_node(
+                            TextNode(block[4:-4], TextType.CODE)
+                        )]
+                    )
+                )
+            case BlockType.QUOTE:
+                children.append(
+                    HTMLNode(
+                        tag="blockquote",
+                        children=text_to_children(block[1:].strip())
+                    )
+                )
+            case BlockType.HEADING:
+                h_type = re.match(r"^#{1,6} ", block).end() - 1
+                children.append(
+                    HTMLNode(
+                        tag=f"h{h_type}",
+                        children=text_to_children(block[h_type + 1:])
+                    )
+                )
+            case BlockType.ORDERED_LIST:
+                list_items = []
+                for item in block.split("\n"):
+                    list_items.append(
+                        HTMLNode(
+                            tag="li",
+                            children=text_to_children(item.split(" ", 1)[1])
+                        )
+                    )
+                children.append(
+                    HTMLNode(
+                        tag="ol",
+                        children=list_items
+                    )
+                )
+            case BlockType.UNORDERED_LIST:
+                list_items = []
+                for item in block.split("\n"):
+                    list_items.append(
+                        HTMLNode(
+                            tag="li",
+                            children=text_to_children(item[2:])
+                        )
+                    )
+                children.append(
+                    HTMLNode(
+                        tag="ul",
+                        children=list_items
+                    )
+                )
+            case _:
+                children.append(
+                    HTMLNode(
+                        tag="p",
+                        children=text_to_children(block.replace("\n", " "))
+                    )
+                )
+    return HTMLNode(
+        tag="div",
+        children=children
     )
 
 
