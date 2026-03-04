@@ -50,4 +50,4 @@ env.bak/
 venv.bak/
 
 # ignore generated public dir
-public/
+*public/
