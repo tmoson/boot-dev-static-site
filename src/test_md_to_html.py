@@ -1,5 +1,5 @@
 import unittest
-from main import markdown_to_html_node
+from nodefunctions import markdown_to_html_node
 
 
 class TestMDToHTML(unittest.TestCase):
@@ -57,7 +57,7 @@ Here we have a list:
         html = node.to_html()
         self.assertEqual(
             html,
-            "<div><p>Here we have a list:</p><ol><li>it's an ordered list</li><li>so we should have multiple items</li><li>that are numbered</li><li>but</li><li>we</li><li>have</li><li>to</li><li>check</li><li>that</li><li>multiple</li><li>digits</li><li>work</li></ol></div>"
+            "<div><p>Here we have a list:</p><ol><li>it's an ordered list</li><li>so we should have multiple items</li><li>that are numbered</li><li>but</li><li>we</li><li>have</li><li>to</li><li>check</li><li>that</li><li>multiple</li><li>digits</li><li>work</li></ol></div>",
         )
 
     def test_unordered_list(self):
@@ -73,7 +73,7 @@ Now we have an unordered list:
         html = node.to_html()
         self.assertEqual(
             html,
-            "<div><p>Now we have an unordered list:</p><ul><li>This is just a bunch of bullet points</li><li>we don't need numbers</li><li>but let's not forget that there can be <a href=\"https://boot.dev\">links</a></li><li>and then there's still other bullets to hit</li></ul></div>"
+            "<div><p>Now we have an unordered list:</p><ul><li>This is just a bunch of bullet points</li><li>we don't need numbers</li><li>but let's not forget that there can be <a href=\"https://boot.dev\">links</a></li><li>and then there's still other bullets to hit</li></ul></div>",
         )
 
     def test_headers(self):
@@ -99,7 +99,7 @@ then there's some text under it
         self.maxDiff = None
         self.assertEqual(
             html,
-            "<div><h1>This is just a normal header</h1><p>then there's some text under it</p><h2>This is going to be an h2 header</h2><h3>This is going to be an h3 header</h3><h4>This is going to be an <b>h4</b> header</h4><h5>This is going to be an <i>h5</i> header</h5><h6>This is going to be an h6 header</h6><p>####### This is going to end up being a normal paragraph!</p></div>"
+            "<div><h1>This is just a normal header</h1><p>then there's some text under it</p><h2>This is going to be an h2 header</h2><h3>This is going to be an h3 header</h3><h4>This is going to be an <b>h4</b> header</h4><h5>This is going to be an <i>h5</i> header</h5><h6>This is going to be an h6 header</h6><p>####### This is going to end up being a normal paragraph!</p></div>",
         )
 
     def test_block_quote(self):
@@ -115,5 +115,5 @@ Isn't that fascinating?
         self.maxDiff = None
         self.assertEqual(
             html,
-            "<div><p>This is just a normal paragraph, but I'd like to quote <b>someone</b> from <i>publication</i>:</p><blockquote>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus efficitur massa elit, eu congue ante viverra et. Integer id malesuada eros. <b>Cras placerat id nibh a interdum.</b> Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.</blockquote><p>Isn't that fascinating?</p></div>"
+            "<div><p>This is just a normal paragraph, but I'd like to quote <b>someone</b> from <i>publication</i>:</p><blockquote>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus efficitur massa elit, eu congue ante viverra et. Integer id malesuada eros. <b>Cras placerat id nibh a interdum.</b> Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.</blockquote><p>Isn't that fascinating?</p></div>",
         )
