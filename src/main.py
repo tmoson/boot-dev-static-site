@@ -1,7 +1,7 @@
 from nodefunctions import markdown_to_html_node, extract_title
-from textnode import TextNode, TextType
 from os import mkdir, listdir, path, getcwd
 from shutil import rmtree, copy
+import sys
 
 
 def copy_contents(files: list, from_dir: str, to_dir: str):
@@ -30,7 +30,9 @@ def copy_static_to_public(static: str = "static", public: str = "public"):
     return
 
 
-def generate_page(from_path: str, template_path: str, dest_path: str):
+def generate_page(
+    from_path: str, template_path: str, dest_path: str, base_path: str = "/"
+):
     print(f"Generating page from {from_path} to {dest_path} using {template_path}")
     with (
         open(from_path, "r") as from_file,
@@ -43,10 +45,14 @@ def generate_page(from_path: str, template_path: str, dest_path: str):
         html_node = markdown_to_html_node(markdown)
         html = html.replace("{{ Title }}", title)
         html = html.replace("{{ Content }}", html_node.to_html())
+        html = html.replace('href="/', f'href="{base_path}')
+        html = html.replace('src="/', f'src="{base_path}')
         dest.write(html)
 
 
-def generate_pages_recursive(dir_path_content: str, template_path: str, dest_path: str):
+def generate_pages_recursive(
+    dir_path_content: str, template_path: str, dest_path: str, base_path: str = "/"
+):
     if dir_path_content == "" or dir_path_content is None:
         return
     if not path.exists(dest_path):
@@ -56,24 +62,34 @@ def generate_pages_recursive(dir_path_content: str, template_path: str, dest_pat
         if path.isfile(item_path) and item_path.endswith(".md"):
             html_item_name = item[:-2] + "html"
             generate_page(
-                item_path, template_path, path.join(dest_path, html_item_name)
+                item_path,
+                template_path,
+                path.join(dest_path, html_item_name),
+                base_path,
             )
-        else:
+        elif not path.isfile(item_path):
             new_dest_subdir = path.join(dest_path, item)
             if not path.exists(new_dest_subdir):
                 mkdir(new_dest_subdir)
-            generate_pages_recursive(item_path, template_path, new_dest_subdir)
+            generate_pages_recursive(
+                item_path, template_path, new_dest_subdir, base_path
+            )
 
 
 def main():
+    if len(sys.argv) == 1:
+        base_path = "/"
+    else:
+        base_path = sys.argv[1]
     current_dir = getcwd()
     static_dir = path.join(current_dir, "static")
-    public_dir = path.join(current_dir, "public")
+    public_dir = path.join(current_dir, "docs")
     copy_static_to_public(static_dir, public_dir)
     generate_pages_recursive(
         path.join(current_dir, "content"),
         path.join(current_dir, "template.html"),
         public_dir,
+        base_path,
     )
 
 
