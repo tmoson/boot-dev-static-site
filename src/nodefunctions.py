@@ -75,6 +75,15 @@ def extract_markdown_images(text):
     return re.findall(r"!\[(.*?)\]\((.*?)\)", text)
 
 
+def extract_title(markdown: str):
+    if markdown is None or markdown == "":
+        raise ValueError("Content required")
+    for line in markdown.split("\n\n"):
+        if re.match(r"^# .*", line.strip()):
+            return line.strip()[2:]
+    raise ValueError("Header required")
+
+
 def split_nodes_images(old_nodes):
     new_nodes = []
     for node in old_nodes:
@@ -97,7 +106,6 @@ def split_nodes_images(old_nodes):
                         text=links[i][0], text_type=TextType.IMAGE, url=links[i][1]
                     )
                 )
-                new_nodes.append(TextNode(split_text[1], TextType.TEXT))
             else:
                 new_nodes.append(TextNode(split_text[0], TextType.TEXT))
                 new_nodes.append(
