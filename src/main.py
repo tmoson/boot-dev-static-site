@@ -23,11 +23,10 @@ def copy_contents(files: list, from_dir: str, to_dir: str):
 
 
 def copy_static_to_public(static: str = "static", public: str = "public"):
-    public_dir = path.join(getcwd(), public)
-    if path.exists(public_dir):
-        rmtree(public_dir)
-    mkdir(public_dir)
-    copy_contents(listdir(static), static, public_dir)
+    if path.exists(public):
+        rmtree(public)
+    mkdir(public)
+    copy_contents(listdir(static), static, public)
     return
 
 
@@ -47,15 +46,34 @@ def generate_page(from_path: str, template_path: str, dest_path: str):
         dest.write(html)
 
 
+def generate_pages_recursive(dir_path_content: str, template_path: str, dest_path: str):
+    if dir_path_content == "" or dir_path_content is None:
+        return
+    if not path.exists(dest_path):
+        mkdir(dest_path)
+    for item in listdir(dir_path_content):
+        item_path = path.join(dir_path_content, item)
+        if path.isfile(item_path) and item_path.endswith(".md"):
+            html_item_name = item[:-2] + "html"
+            generate_page(
+                item_path, template_path, path.join(dest_path, html_item_name)
+            )
+        else:
+            new_dest_subdir = path.join(dest_path, item)
+            if not path.exists(new_dest_subdir):
+                mkdir(new_dest_subdir)
+            generate_pages_recursive(item_path, template_path, new_dest_subdir)
+
+
 def main():
     current_dir = getcwd()
     static_dir = path.join(current_dir, "static")
     public_dir = path.join(current_dir, "public")
     copy_static_to_public(static_dir, public_dir)
-    generate_page(
-        path.join(current_dir, "content", "index.md"),
+    generate_pages_recursive(
+        path.join(current_dir, "content"),
         path.join(current_dir, "template.html"),
-        path.join(current_dir, "public", "index.html"),
+        public_dir,
     )
 
 
